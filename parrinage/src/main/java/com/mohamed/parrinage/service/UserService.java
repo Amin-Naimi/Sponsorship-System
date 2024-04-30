@@ -16,23 +16,27 @@ public class UserService {
     public MyUser registration(MyUser user){
             if (user != null){
                 user.setCodeAffiliation(generateAffiliationCode(user));
-                updateUserParents(user, new ArrayList<>());
+                updateUserParents(user);
                 return userRepo.save(user);
             }
             return null;
     }
 
 
-    private void updateUserParents(MyUser user, List<MyUser> parents) {
+    private void updateUserParents(MyUser user) {
         MyUser parent = getUserByAffiliationCode(user.getCodeAffiliationInviter());
         if (parent != null) {
-            // Créer une nouvelle liste de parents pour chaque appel récursif//Cela garantit que chaque appel récursif utilise une copie distincte de la liste parents, évitant ainsi les modifications inattendues et les effets secondaires
-            List<MyUser> updatedParents = new ArrayList<>(parents);
+            // Récupérer les parents du parent
+            List<MyUser> parentsOfParent = parent.getParents();
+            // Créer une nouvelle liste de parents pour l'utilisateur
+            List<MyUser> updatedParents = new ArrayList<>(parentsOfParent);
+            // Ajouter le parent direct à la liste des parents
             updatedParents.add(parent);
-            updateUserParents(parent, updatedParents);
+            // Mettre à jour les parents de l'utilisateur
             user.setParents(updatedParents);
         }
     }
+
 
     public MyUser getUserByAffiliationCode(String codeAffiliationInviter){
         MyUser user =  userRepo.findUsersByCodeAffiliation(codeAffiliationInviter);
