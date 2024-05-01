@@ -13,15 +13,24 @@ import java.util.List;
 public class UserService {
     private final UserRepo userRepo;
 
-    public MyUser registration(MyUser user){
-            if (user != null){
-                user.setCodeAffiliation(generateAffiliationCode(user));
-                updateUserParents(user);
-                return userRepo.save(user);
+    public MyUser registration(MyUser user) {
+        if (user != null) {
+            user.setCodeAffiliation(generateAffiliationCode(user));
+            updateUserParents(user);
+            // Calcul du niveau de l'utilisateur
+            MyUser parrain = getUserByAffiliationCode(user.getCodeAffiliationInviter());
+            if (parrain != null) {
+                user.setParrainId(parrain.getId());
+                user.setNiveau(parrain.getNiveau() + 1);
+            } else {
+                // Si l'utilisateur n'a pas de parrain, il est probablement l'utilisateur de référence
+                user.setNiveau(0);
             }
-            return null;
-    }
 
+            return userRepo.save(user);
+        }
+        return null;
+    }
 
     private void updateUserParents(MyUser user) {
         MyUser parent = getUserByAffiliationCode(user.getCodeAffiliationInviter());
@@ -37,18 +46,16 @@ public class UserService {
         }
     }
 
-
-    public MyUser getUserByAffiliationCode(String codeAffiliationInviter){
-        MyUser user =  userRepo.findUsersByCodeAffiliation(codeAffiliationInviter);
+    public MyUser getUserByAffiliationCode(String codeAffiliationInviter) {
+        MyUser user = userRepo.findUsersByCodeAffiliation(codeAffiliationInviter);
         System.err.println("***** GET USER BY AFFILIATION CODE ****");
         System.err.println(user);
         System.err.println("***************************************");
 
         return user;
     }
-    private String generateAffiliationCode(MyUser user){
-        return "CODE_AFF"+user.getLastName();
+
+    private String generateAffiliationCode(MyUser user) {
+        return "CODE_AFF" + user.getLastName();
     }
-
-
 }
