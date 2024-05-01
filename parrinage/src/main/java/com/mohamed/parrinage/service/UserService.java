@@ -12,6 +12,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepo userRepo;
+    private static final int MAX_LEVEL_1 = 6;
+    private static final int MAX_LEVEL_2 = 3;
+
+
 
     public MyUser registration(MyUser user) {
         if (user != null) {
@@ -21,7 +25,9 @@ public class UserService {
             MyUser parrain = getUserByAffiliationCode(user.getCodeAffiliationInviter());
             if (parrain != null) {
                 user.setParrainId(parrain.getId());
-                user.setNiveau(parrain.getNiveau() + 1);
+                int niveau = parrain.getNiveau() + 1;
+                // Limiter le niveau à 6
+                user.setNiveau(Math.min(niveau, MAX_LEVEL_1));
             } else {
                 // Si l'utilisateur n'a pas de parrain, il est probablement l'utilisateur de référence
                 user.setNiveau(0);
