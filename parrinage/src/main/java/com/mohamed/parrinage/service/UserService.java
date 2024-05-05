@@ -12,8 +12,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepo userRepo;
-    private static final int MAX_LEVEL_1 = 6;
-    private static final int MAX_LEVEL_2 = 3;
+   // private static final int MAX_LEVEL_1 = 6;
+    // private static final int MAX_LEVEL_2 = 3;
 
 
 
@@ -21,18 +21,8 @@ public class UserService {
         if (user != null) {
             user.setCodeAffiliation(generateAffiliationCode(user));
             updateUserParents(user);
-            // Calcul du niveau de l'utilisateur
             MyUser parrain = getUserByAffiliationCode(user.getCodeAffiliationInviter());
-            if (parrain != null) {
                 user.setParrainId(parrain.getId());
-                int niveau = parrain.getNiveau() + 1;
-                // Limiter le niveau à 6
-                user.setNiveau(Math.min(niveau, MAX_LEVEL_1));
-            } else {
-                // Si l'utilisateur n'a pas de parrain, il est probablement l'utilisateur de référence
-                user.setNiveau(0);
-            }
-
             return userRepo.save(user);
         }
         return null;
@@ -41,16 +31,16 @@ public class UserService {
     private void updateUserParents(MyUser user) {
         MyUser parent = getUserByAffiliationCode(user.getCodeAffiliationInviter());
         if (parent != null) {
-            // Récupérer les parents du parent
             List<MyUser> parentsOfParent = parent.getParents();
-            // Créer une nouvelle liste de parents pour l'utilisateur
             List<MyUser> updatedParents = new ArrayList<>(parentsOfParent);
-            // Ajouter le parent direct à la liste des parents
             updatedParents.add(parent);
-            // Mettre à jour les parents de l'utilisateur
             user.setParents(updatedParents);
         }
     }
+
+   /* public List<MyUser> getAllChildrenOfParent(Long ParentID){
+
+    }*/
 
     public MyUser getUserByAffiliationCode(String codeAffiliationInviter) {
         MyUser user = userRepo.findUsersByCodeAffiliation(codeAffiliationInviter);

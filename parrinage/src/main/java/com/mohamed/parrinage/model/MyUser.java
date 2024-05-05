@@ -22,7 +22,6 @@ public class MyUser {
     private String codeAffiliation;
     private String codeAffiliationInviter;
     private Long parrainId; // Identifiant du parrain de l'utilisateur
-    private int niveau; // Niveau de l'utilisateur dans la hiérarchie
 
     @ManyToMany
     @JoinTable(
