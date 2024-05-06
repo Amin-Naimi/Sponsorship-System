@@ -31,4 +31,8 @@ public class MyUser {
             inverseJoinColumns = @JoinColumn(name = "parent_id")
     )
     private List<MyUser> parents;
+
+    @OneToMany(mappedBy = "user",
+            cascade = CascadeType.ALL)
+    private List<OperationLevel> operationLevels;
 }
