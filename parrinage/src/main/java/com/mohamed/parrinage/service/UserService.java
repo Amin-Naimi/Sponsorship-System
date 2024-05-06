@@ -1,7 +1,9 @@
 package com.mohamed.parrinage.service;
 
 import com.mohamed.parrinage.model.MyUser;
+import com.mohamed.parrinage.model.Parrainage;
 import com.mohamed.parrinage.model.dto.Child;
+import com.mohamed.parrinage.repo.ParrinageRepo;
 import com.mohamed.parrinage.repo.UserRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepo userRepo;
+    private final ParrinageRepo parrinageRepo;
 
     public MyUser registration(MyUser user) {
         if (user != null) {
@@ -31,6 +34,16 @@ public class UserService {
         return null;
     }
 
+
+    private void createParrinageEntry(MyUser user, MyUser parent, int parrinageLevel){
+        Parrainage parrainage = new Parrainage();
+        parrainage.setUser(user);
+        parrainage.setUserEmail(user.getEmail());
+        parrainage.setParent(parent);
+        parrainage.setParentEmail(parent.getEmail());
+        parrainage.setParrinageLevel(parrinageLevel);
+        parrinageRepo.save(parrainage);
+    }
     private void updateUserParents(MyUser user) {
         MyUser parent = getUserByAffiliationCode(user.getCodeAffiliationInviter());
         if (parent != null) {

@@ -23,7 +23,7 @@ public class MyUser {
     private String codeAffiliationInviter;
     private Long parrainId;
     private Integer userLevelInTheNetwork;
-    private Double solde;
+    private Double solde = 50.0;
 
     @ManyToMany
     @JoinTable(
