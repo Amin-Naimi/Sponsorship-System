@@ -17,6 +17,7 @@ public class Child {
     private String codeAffiliationInviter;
     private Long parrainId;
     private Integer userLevelInTheNetwork;
+    private Double solde;
 
 
     public static Child formEntiyToDto(MyUser user){
@@ -29,6 +30,7 @@ public class Child {
                 .codeAffiliation(user.getCodeAffiliation())
                 .parrainId(user.getParrainId())
                 .userLevelInTheNetwork(user.getUserLevelInTheNetwork())
+                .solde(user.getSolde())
                 .build();
     }
 

@@ -23,6 +23,7 @@ public class MyUser {
     private String codeAffiliationInviter;
     private Long parrainId;
     private Integer userLevelInTheNetwork;
+    private Double solde;
 
     @ManyToMany
     @JoinTable(
@@ -32,7 +33,4 @@ public class MyUser {
     )
     private List<MyUser> parents;
 
-    @OneToMany(mappedBy = "user",
-            cascade = CascadeType.ALL)
-    private List<OperationLevel> operationLevels;
 }
