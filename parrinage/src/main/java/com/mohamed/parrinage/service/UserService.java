@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,6 +22,9 @@ public class UserService {
             MyUser parrain = getUserByAffiliationCode(user.getCodeAffiliationInviter());
             if(parrain != null){
             user.setParrainId(parrain.getId());
+            user.setUserLevelInTheNetwork(parrain.getUserLevelInTheNetwork() + 1);
+            }else {
+                user.setUserLevelInTheNetwork(0);
             }
             return userRepo.save(user);
         }

@@ -21,7 +21,8 @@ public class MyUser {
     private String email;
     private String codeAffiliation;
     private String codeAffiliationInviter;
-    private Long parrainId; // Identifiant du parrain de l'utilisateur
+    private Long parrainId;
+    private Integer userLevelInTheNetwork;
 
     @ManyToMany
     @JoinTable(
