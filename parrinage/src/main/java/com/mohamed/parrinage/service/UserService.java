@@ -2,7 +2,6 @@ package com.mohamed.parrinage.service;
 
 import com.mohamed.parrinage.model.MyUser;
 import com.mohamed.parrinage.model.Parrainage;
-import com.mohamed.parrinage.model.dto.Child;
 import com.mohamed.parrinage.repo.ParrinageRepo;
 import com.mohamed.parrinage.repo.UserRepo;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -22,10 +20,12 @@ public class UserService {
         if (user != null) {
             user.setCodeAffiliation(generateAffiliationCode(user));
             updateUserParents(user);
+
             MyUser parrain = getUserByAffiliationCode(user.getCodeAffiliationInviter());
             if(parrain != null){
-            user.setParrainId(parrain.getId());
-            user.setUserLevelInTheNetwork(parrain.getUserLevelInTheNetwork() + 1);
+                user.setParrainId(parrain.getId());
+                user.setUserLevelInTheNetwork(parrain.getUserLevelInTheNetwork() + 1);
+
             }else {
                 user.setUserLevelInTheNetwork(0);
             }
@@ -43,6 +43,7 @@ public class UserService {
         parrainage.setParentEmail(parent.getEmail());
         parrainage.setParrinageLevel(parrinageLevel);
         parrinageRepo.save(parrainage);
+
     }
     private void updateUserParents(MyUser user) {
         MyUser parent = getUserByAffiliationCode(user.getCodeAffiliationInviter());
@@ -51,21 +52,9 @@ public class UserService {
             List<MyUser> updatedParents = new ArrayList<>(parentsOfParent);
             updatedParents.add(parent);
             user.setParents(updatedParents);
+            createParrinageEntry(user, parent, user.getUserLevelInTheNetwork());
+
         }
-    }
-
-
-    public List<Child> getChildren(Long parentId) {
-        return userRepo.findAll()
-                .stream()
-                .filter(
-                        user -> user.getParents() != null
-                                &&
-                                user.getParents()
-                                        .stream()
-                                        .anyMatch(parent -> parent.getId().equals(parentId)))
-                .map(Child::formEntiyToDto)
-                .collect(Collectors.toList());
     }
 
 
