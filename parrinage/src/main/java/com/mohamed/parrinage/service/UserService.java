@@ -1,28 +1,29 @@
 package com.mohamed.parrinage.service;
 
 import com.mohamed.parrinage.model.MyUser;
+import com.mohamed.parrinage.model.dto.Child;
 import com.mohamed.parrinage.repo.UserRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepo userRepo;
-   // private static final int MAX_LEVEL_1 = 6;
-    // private static final int MAX_LEVEL_2 = 3;
-
-
 
     public MyUser registration(MyUser user) {
         if (user != null) {
             user.setCodeAffiliation(generateAffiliationCode(user));
             updateUserParents(user);
             MyUser parrain = getUserByAffiliationCode(user.getCodeAffiliationInviter());
-                user.setParrainId(parrain.getId());
+            if(parrain != null){
+            user.setParrainId(parrain.getId());
+            }
             return userRepo.save(user);
         }
         return null;
@@ -38,9 +39,20 @@ public class UserService {
         }
     }
 
-   /* public List<MyUser> getAllChildrenOfParent(Long ParentID){
 
-    }*/
+    public List<Child> getChildren(Long parentId) {
+        return userRepo.findAll()
+                .stream()
+                .filter(
+                        user -> user.getParents() != null
+                                &&
+                                user.getParents()
+                                        .stream()
+                                        .anyMatch(parent -> parent.getId().equals(parentId)))
+                .map(Child::formEntiyToDto)
+                .collect(Collectors.toList());
+    }
+
 
     public MyUser getUserByAffiliationCode(String codeAffiliationInviter) {
         MyUser user = userRepo.findUsersByCodeAffiliation(codeAffiliationInviter);
