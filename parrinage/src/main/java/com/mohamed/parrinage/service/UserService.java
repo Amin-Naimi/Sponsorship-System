@@ -2,6 +2,7 @@ package com.mohamed.parrinage.service;
 
 import com.mohamed.parrinage.model.MyUser;
 import com.mohamed.parrinage.model.Parrainage;
+import com.mohamed.parrinage.model.dto.Child;
 import com.mohamed.parrinage.repo.ParrinageRepo;
 import com.mohamed.parrinage.repo.UserRepo;
 import lombok.RequiredArgsConstructor;
@@ -9,20 +10,19 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepo userRepo;
     private final ParrinageRepo parrinageRepo;
+    private static final int MAX_PARRINAGE_LEVEL = 3;
 
     public MyUser registration(MyUser user) {
         if (user != null) {
-            //get affiliation cdode
             user.setCodeAffiliation(generateAffiliationCode(user));
-            // update parents
             updateUserParents(user);
-            //setting level in the global network
             MyUser parrain = getUserByAffiliationCode(user.getCodeAffiliationInviter());
             if(parrain != null){
                 user.setParrainId(parrain.getId());
@@ -30,7 +30,6 @@ public class UserService {
             }else {
                 user.setUserLevelInTheNetwork(0);
             }
-            //saving the user
             return userRepo.save(user);
         }
         return null;
@@ -49,7 +48,7 @@ public class UserService {
             user.setParents(updatedParents);
 
             int parrinageLevel = 1; // Start with the highest level
-            for (int i = updatedParents.size() - 1; i >= 0 && parrinageLevel <= 3; i--) {
+            for (int i = updatedParents.size() - 1; i >= 0 && parrinageLevel <= MAX_PARRINAGE_LEVEL; i--) {
                 MyUser grandParent = updatedParents.get(i);
                 createParrinageEntry(user, grandParent, parrinageLevel);
                 parrinageLevel++;
@@ -65,8 +64,22 @@ public class UserService {
         parrainage.setParentID(parent.getId());
         parrainage.setParrinageLevel(parrinageLevel);
         parrinageRepo.save(parrainage);
-
     }
+
+
+    public List<Child> getChildren(Long parentId) {
+        return userRepo.findAll()
+                .stream()
+                .filter(
+                        user -> user.getParents() != null
+                                &&
+                                user.getParents()
+                                        .stream()
+                                        .anyMatch(parent -> parent.getId().equals(parentId)))
+                .map(Child::formEntiyToDto)
+                .collect(Collectors.toList());
+    }
+
 
 
     public MyUser getUserByAffiliationCode(String codeAffiliationInviter) {
