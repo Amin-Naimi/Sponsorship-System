@@ -37,6 +37,26 @@ public class UserService {
     }
 
 
+
+    private void updateUserParents(MyUser user) {
+        //test if user have a parent
+        MyUser parent = getUserByAffiliationCode(user.getCodeAffiliationInviter());
+        if (parent != null) {
+            List<MyUser> parentsOfParent = parent.getParents();
+            List<MyUser> updatedParents = new ArrayList<>(parentsOfParent);
+            // add the parent to the parent list
+            updatedParents.add(parent);
+            user.setParents(updatedParents);
+
+            int parrinageLevel = 1; // Commencez par le niveau le plus élevé
+            for (int i = updatedParents.size() - 1; i >= 0; i--) {
+                MyUser grandParent = updatedParents.get(i);
+                createParrinageEntry(user, grandParent, parrinageLevel);
+                parrinageLevel++;
+            }
+        }
+    }
+
     private void createParrinageEntry(MyUser user, MyUser parent, int parrinageLevel){
         Parrainage parrainage = new Parrainage();
         parrainage.setUserEmail(user.getEmail());
@@ -44,20 +64,6 @@ public class UserService {
         parrainage.setParrinageLevel(parrinageLevel);
         parrinageRepo.save(parrainage);
 
-    }
-    private void updateUserParents(MyUser user) {
-        //test if user have a parent
-        MyUser parent = getUserByAffiliationCode(user.getCodeAffiliationInviter());
-        if (parent != null) {
-            // get the parents of the parent
-            List<MyUser> parentsOfParent = parent.getParents();
-            //creating a new list
-            List<MyUser> updatedParents = new ArrayList<>(parentsOfParent);
-            // add the parent to the parent list
-            updatedParents.add(parent);
-            //setting the new parents list to the user
-            user.setParents(updatedParents);
-        }
     }
 
 
