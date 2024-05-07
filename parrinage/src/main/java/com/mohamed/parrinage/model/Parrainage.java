@@ -15,8 +15,10 @@ public class Parrainage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Long userID;
     private String userEmail;
 
+    private Long parentID;
     private String parentEmail;
 
     private int parrinageLevel;

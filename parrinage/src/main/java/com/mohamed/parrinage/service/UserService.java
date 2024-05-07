@@ -48,8 +48,8 @@ public class UserService {
             updatedParents.add(parent);
             user.setParents(updatedParents);
 
-            int parrinageLevel = 1; // Commencez par le niveau le plus élevé
-            for (int i = updatedParents.size() - 1; i >= 0; i--) {
+            int parrinageLevel = 1; // Start with the highest level
+            for (int i = updatedParents.size() - 1; i >= 0 && parrinageLevel <= 3; i--) {
                 MyUser grandParent = updatedParents.get(i);
                 createParrinageEntry(user, grandParent, parrinageLevel);
                 parrinageLevel++;
@@ -61,6 +61,8 @@ public class UserService {
         Parrainage parrainage = new Parrainage();
         parrainage.setUserEmail(user.getEmail());
         parrainage.setParentEmail(parent.getEmail());
+        parrainage.setUserID(user.getId());
+        parrainage.setParentID(parent.getId());
         parrainage.setParrinageLevel(parrinageLevel);
         parrinageRepo.save(parrainage);
 
