@@ -21,6 +21,7 @@ public class Parrainage {
     private String parentEmail;
     private int parrinageLevel;
     private LocalDateTime joinNetworkDate;
+    //
     private LocalDateTime lastCommissionDate;
     private double totalCommissionEarned;
     private double lastCommissionAmount;
