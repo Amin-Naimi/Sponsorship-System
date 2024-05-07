@@ -23,8 +23,8 @@ public class UserController {
         return userService.getUserByAffiliationCode(affiliationCode);
     }
 
-    @GetMapping("get/children")
+   /* @GetMapping("get/children")
     public List<Child> getUserChildren(@RequestParam(name = "userID") Long userId){
         return userService.getChildren(userId);
-    }
+    }*/
 }
