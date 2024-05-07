@@ -2,6 +2,7 @@ package com.mohamed.parrinage.controller;
 
 import com.mohamed.parrinage.model.MyUser;
 import com.mohamed.parrinage.model.dto.Child;
+import com.mohamed.parrinage.model.dto.Filleul;
 import com.mohamed.parrinage.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -23,8 +24,17 @@ public class UserController {
         return userService.getUserByAffiliationCode(affiliationCode);
     }
 
-   /* @GetMapping("get/children")
+    @GetMapping("get/filleul")
+    public List<Filleul> getUserfilleul(
+                @RequestParam(name = "userID") Long userId,
+            @RequestParam("userEmail") String userEmail){
+        return userService.getUserFilleuls(userId,userEmail);
+    }
+
+
+}
+
+ /* @GetMapping("get/children")
     public List<Child> getUserChildren(@RequestParam(name = "userID") Long userId){
         return userService.getChildren(userId);
     }*/
-}

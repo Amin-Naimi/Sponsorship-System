@@ -9,6 +9,7 @@ import com.mohamed.parrinage.repo.UserRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -60,9 +61,9 @@ public class UserService {
         Parrainage parrainage = new Parrainage();
         parrainage.setUserEmail(user.getEmail());
         parrainage.setParentEmail(parent.getEmail());
-        parrainage.setUserId(user.getId());
         parrainage.setParentId(parent.getId());
         parrainage.setParrinageLevel(parrinageLevel);
+        parrainage.setJoinNetworkDate(LocalDateTime.now());
         parrinageRepo.save(parrainage);
     }
 
