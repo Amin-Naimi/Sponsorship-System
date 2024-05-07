@@ -3,6 +3,7 @@ package com.mohamed.parrinage.service;
 import com.mohamed.parrinage.model.MyUser;
 import com.mohamed.parrinage.model.Parrainage;
 import com.mohamed.parrinage.model.dto.Child;
+import com.mohamed.parrinage.model.dto.Filleul;
 import com.mohamed.parrinage.repo.ParrinageRepo;
 import com.mohamed.parrinage.repo.UserRepo;
 import lombok.RequiredArgsConstructor;
@@ -24,17 +25,16 @@ public class UserService {
             user.setCodeAffiliation(generateAffiliationCode(user));
             updateUserParents(user);
             MyUser parrain = getUserByAffiliationCode(user.getCodeAffiliationInviter());
-            if(parrain != null){
+            if (parrain != null) {
                 user.setParrainId(parrain.getId());
                 user.setUserLevelInTheNetwork(parrain.getUserLevelInTheNetwork() + 1);
-            }else {
+            } else {
                 user.setUserLevelInTheNetwork(0);
             }
             return userRepo.save(user);
         }
         return null;
     }
-
 
 
     private void updateUserParents(MyUser user) {
@@ -56,16 +56,19 @@ public class UserService {
         }
     }
 
-    private void createParrinageEntry(MyUser user, MyUser parent, int parrinageLevel){
+    private void createParrinageEntry(MyUser user, MyUser parent, int parrinageLevel) {
         Parrainage parrainage = new Parrainage();
         parrainage.setUserEmail(user.getEmail());
         parrainage.setParentEmail(parent.getEmail());
-        parrainage.setUserID(user.getId());
-        parrainage.setParentID(parent.getId());
+        parrainage.setUserId(user.getId());
+        parrainage.setParentId(parent.getId());
         parrainage.setParrinageLevel(parrinageLevel);
         parrinageRepo.save(parrainage);
     }
 
+    public List<Filleul> getUserFilleuls(Long userId, String userEmail) {
+        return parrinageRepo.findAllByParentIdAndParentEmail(userId, userEmail).stream().map(Filleul::fromEntityToDto).collect(Collectors.toList());
+    }
 
     public List<Child> getChildren(Long parentId) {
         return userRepo.findAll()
@@ -79,7 +82,6 @@ public class UserService {
                 .map(Child::formEntiyToDto)
                 .collect(Collectors.toList());
     }
-
 
 
     public MyUser getUserByAffiliationCode(String codeAffiliationInviter) {

@@ -16,9 +16,9 @@ public class Parrainage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long userID;
+    private Long userId;
     private String userEmail;
-    private Long parentID;
+    private Long parentId;
     private String parentEmail;
     private int parrinageLevel;
     private LocalDateTime joinNetworkDate;
